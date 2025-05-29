@@ -18,8 +18,14 @@
     </header>
     <main>
         <h1>test page</h1>
-        <div>
-            <canvas id="myChart"></canvas>
+
+        <div class="row">
+            <div class="col-md-6">
+                <canvas  id="myChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas  id="linechart"></canvas>
+            </div>
         </div>
 
     </main>
@@ -43,25 +49,29 @@
 
     <script>
         const ctx = $('#myChart');
-        // console.log(ctx);
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        const linectx = $('#linechart');
+        var data = {
+                labels: ['Jan', 'Feb', 'March', 'April', 'May', 'June'],
                 datasets: [{
                     label: '# of Votes(Male)',
                     data: [12, 19, 3, 5, 2, 3],
-                    borderWidth: 1
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
                 },{
                     label: '# of Votes(Female)',
                     data: [10, 5, 8, 9, 11, 7],
-                    borderWidth: 1
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(0, 255, 0, 0.2)',
                 }, {
                     label: '# of Votes(Other)',
                     data: [3, 6, 2, 8, 4, 5],
-                    borderWidth: 1
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(0, 0, 255, 0.2)',
                 }]
-            },
+            };
+        var chartSaya = new Chart(ctx, {
+            type: 'bar',
+            data: data,
             options: {
                 scales: {
                     y: {
@@ -70,7 +80,18 @@
                 }
             }
         });
-    </script>
+
+        var lineChartSaya = new Chart(linectx, {
+            type: 'line',
+            data: data,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     </script>
 </body>
 
