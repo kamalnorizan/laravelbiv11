@@ -9,6 +9,10 @@
             <div class="navbar-nav">
                 <a class="nav-link active" aria-current="page" href="{{ route('chartjs') }}">ChartJS Static</a>
             </div>
+            <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="{{ route('dynamicdashboard.index') }}">ChartJS Dynamic</a>
+            </div>
         </div>
+
     </div>
 </nav>

@@ -14,6 +14,6 @@ class Payment extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customers::class, 'customerNumber', 'customerNumber');
+        return $this->belongsTo(Customer::class, 'customerNumber', 'customerNumber');
     }
 }
