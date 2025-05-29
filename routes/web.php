@@ -8,6 +8,6 @@ Route::get('/', function () {
 
 Route::get('/chartjs', function () {
     return view('chartjs');
-});
+})->name('chartjs');
 
 
