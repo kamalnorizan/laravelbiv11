@@ -42,15 +42,23 @@
 
 
     <script>
-        const ctx = document.getElementById('myChart');
-
+        const ctx = $('#myChart');
+        // console.log(ctx);
         new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                 datasets: [{
-                    label: '# of Votes',
+                    label: '# of Votes(Male)',
                     data: [12, 19, 3, 5, 2, 3],
+                    borderWidth: 1
+                },{
+                    label: '# of Votes(Female)',
+                    data: [10, 5, 8, 9, 11, 7],
+                    borderWidth: 1
+                }, {
+                    label: '# of Votes(Other)',
+                    data: [3, 6, 2, 8, 4, 5],
                     borderWidth: 1
                 }]
             },
