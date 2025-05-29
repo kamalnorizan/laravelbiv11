@@ -168,10 +168,10 @@
             return Math.floor(Math.random() * 60);
         }
 
-        function createDonutChart(ctxId, label, data, colors){
+        function createDonutChart(ctxId, label, data, colors, type){
             const ctx = document.getElementById(ctxId).getContext('2d');
             new Chart(ctx, {
-                type: 'doughnut',
+                type: type,
                 data: {
                     labels: label,
                     datasets: [{
@@ -196,10 +196,10 @@
             });
         }
 
-        createDonutChart('donut1', ['Red', 'Blue', 'Yellow'], [12, 19, 3], ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)']);
-        createDonutChart('donut2', ['Green', 'Purple', 'Orange'], [5, 10, 15], ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)']);
-        createDonutChart('donut3', ['Pink', 'Cyan', 'Magenta'], [8, 12, 6], ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)']);
-        createDonutChart('donut4', ['Lime', 'Teal', 'Coral'], [7, 14, 9], ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)']);
+        createDonutChart('donut1', ['Red', 'Blue', 'Yellow'], [12, 19, 3], ['rgba(255, 99, 132, .8)', 'rgba(54, 162, 235, .8)', 'rgba(255, 206, 86, .8)'], 'doughnut');
+        createDonutChart('donut2', ['Green', 'Purple', 'Orange'], [5, 10, 15], ['rgba(75, 192, 192, .8)', 'rgba(153, 102, 255, .8)', 'rgba(255, 159, 64, .8)'], 'doughnut');
+        createDonutChart('donut3', ['Pink', 'Cyan', 'Magenta'], [8, 12, 6], ['rgba(255, 99, 132, .8)', 'rgba(54, 162, 235, .8)', 'rgba(255, 206, 86, .8)'], 'pie');
+        createDonutChart('donut4', ['Lime', 'Teal', 'Coral'], [7, 14, 9], ['rgba(75, 192, 192, .8)', 'rgba(153, 102, 255, .8)', 'rgba(255, 159, 64, .8)'], 'pie');
 
     </script>
 </body>
