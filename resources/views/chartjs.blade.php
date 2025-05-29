@@ -27,6 +27,28 @@
                 <canvas  id="linechart"></canvas>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-6">
+                <canvas  id="bubbleChart"></canvas>
+            </div>
+            {{-- <div class="col-md-6">
+                <canvas  id="linechart"></canvas>
+            </div> --}}
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-3">
+                <canvas  id="donut1"></canvas>
+            </div>
+            <div class="col-md-3">
+                <canvas  id="donut2"></canvas>
+            </div>
+            <div class="col-md-3">
+                <canvas  id="donut3"></canvas>
+            </div>
+            <div class="col-md-3">
+                <canvas  id="donut4"></canvas>
+            </div>
+        </div>
 
     </main>
     <footer>
@@ -50,6 +72,7 @@
     <script>
         const ctx = $('#myChart');
         const linectx = $('#linechart');
+        const bubblectx = $('#bubbleChart');
         var data = {
                 labels: ['Jan', 'Feb', 'March', 'April', 'May', 'June'],
                 datasets: [{
@@ -92,6 +115,92 @@
                 }
             }
         });
+
+        var bubbleChartSaya = new Chart(bubblectx, {
+            type: 'bubble',
+            data: {
+                datasets: [ {
+                    label: 'Category A',
+                    data: [
+                        { x: randomX(), y: randomY(), r: randomY() },
+                        { x: randomX(), y: randomY(), r: randomY() },
+                        { x: randomX(), y: randomY(), r: randomY() }
+                    ],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Category B',
+                    data: [
+                        { x: randomX(), y: randomY(), r: randomY() },
+                        { x: randomX(), y: randomY(), r: randomY() },
+                        { x: randomX(), y: randomY(), r: randomY() }
+                    ],
+                    backgroundColor: 'rgb(255, 99, 132, 0.2)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
+                },  {
+                    label: 'Category C',
+                    data: [
+                        { x: randomX(), y: randomY(), r: randomY() },
+                        { x: randomX(), y: randomY(), r: randomY() },
+                        { x: randomX(), y: randomY(), r: randomY() }
+                    ],
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function randomX() {
+            return Math.floor(Math.random() * 70);
+        }
+
+        function randomY() {
+            return Math.floor(Math.random() * 60);
+        }
+
+        function createDonutChart(ctxId, label, data, colors){
+            const ctx = document.getElementById(ctxId).getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: 'Votes',
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Donut Chart Example'
+                        }
+                    }
+                }
+            });
+        }
+
+        createDonutChart('donut1', ['Red', 'Blue', 'Yellow'], [12, 19, 3], ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)']);
+        createDonutChart('donut2', ['Green', 'Purple', 'Orange'], [5, 10, 15], ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)']);
+        createDonutChart('donut3', ['Pink', 'Cyan', 'Magenta'], [8, 12, 6], ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)']);
+        createDonutChart('donut4', ['Lime', 'Teal', 'Coral'], [7, 14, 9], ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)']);
+
     </script>
 </body>
 
