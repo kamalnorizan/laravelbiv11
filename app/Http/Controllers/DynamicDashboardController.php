@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Office;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Employee;
@@ -12,23 +13,38 @@ class DynamicDashboardController extends Controller
 {
     public function index()
     {
-        return view('dynamic-dashboard');
+        $offices = Office::pluck('city','officeCode');
+        return view('dynamic-dashboard', compact('offices'));
 
     }
 
     public function loaddata(Request $request)
     {
-        $customer = Customer::count();
-        $product = Product::count();
-        $order = Order::count();
-        $employee = Employee::count();
+        $customer = Customer::query();
+        $product = Product::query();
+        $order = Order::query();
+        $employee = Employee::query();
 
-        $data = [
-            'customer' => $customer,
-            'product' => $product,
-            'order' => $order,
-            'employee' => $employee,
-        ];
+        if($request->has('office') && $request->office != '') {
+            $customer->whereHas('salesRep', function ($query) use ($request) {
+                $query->where('officeCode', $request->office);
+            });
+            $order->whereHas('customer', function ($query) use ($request) {
+                $query->whereHas('salesRep', function ($query) use ($request) {
+                    $query->where('officeCode', $request->office);
+                });
+            });
+            $employee->where('officeCode', $request->office);
+        }
+
+        $card['customer'] = $customer->count();
+        $card['product'] = $product->count();
+        $card['order'] = $order->count();
+        $card['employee'] = $employee->count();
+
+        $data['card'] = $card;
+
+
         return response()->json($data);
     }
 }
