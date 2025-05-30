@@ -69,6 +69,11 @@
 
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-6">
+            <canvas id="revChart" height="250"></canvas>
+        </div>
+    </div>
 
 
 
@@ -90,6 +95,16 @@
                 </select>
                 <small class="text-danger">{{ $errors->first('office') }}</small>
             </div>
+            <div class="form-group {{ $errors->has('year') ? 'has-error' : '' }}">
+                <label for="year">Year</label>
+                <select id="year" name="year" class="form-control" required>
+                    <option value="">Select year</option>
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+                <small class="text-danger">{{ $errors->first('year') }}</small>
+            </div>
             <button type="button" id="btnFilter" class="btn btn-primary mt-3">Apply Filter</button>
             <button type="button" class="btn btn-danger btn-delete mt-3">Apply Filter</button>
         </div>
@@ -107,7 +122,8 @@
                 url: "{{ route('dynamicdashboard.loaddata') }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
-                    "office": $('#office').val()
+                    "office": $('#office').val(),
+                    "year": $('#year').val()
                 },
                 dataType: "json",
                 success: function(response) {
@@ -118,6 +134,40 @@
                         $('.card.text-bg-warning .card-text').html(response.card.employee);
                     }, 1000);
                     $('#offcanvasFilter').offcanvas('hide');
+                    const labels = response.monthOrder.map(item => `${item.month} ${item.year}`);
+                    const data = response.monthOrder.map(item => parseFloat(item.total) || 0);
+                    renderMonthlyRevenueChart(labels, data);
+                }
+            });
+        }
+        var monthlyRevChart;
+        function renderMonthlyRevenueChart(labels, data){
+            const monthlyRevCtx = document.getElementById('revChart').getContext('2d');
+
+            if(monthlyRevChart) {
+                monthlyRevChart.destroy();
+            }
+
+            monthlyRevChart = new Chart(monthlyRevCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: data,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
             });
         }

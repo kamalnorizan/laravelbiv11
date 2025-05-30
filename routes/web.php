@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\DynamicDashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DynamicDashboardController;
 
 Route::get('/', function () {
     return view('welcome');
