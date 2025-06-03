@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DynamicDashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -9,5 +10,8 @@ Route::get('/', function () {
 Route::get('/chartjs', function () {
     return view('chartjs');
 })->name('chartjs');
+
+Route::get('/dynamicdashboard', [DynamicDashboardController::class, 'index'])->name('dynamicdashboard.index');
+Route::post('/dynamicdashboard/loaddata', [DynamicDashboardController::class, 'loaddata'])->name('dynamicdashboard.loaddata');
 
 
