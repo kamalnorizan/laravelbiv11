@@ -190,11 +190,29 @@
         $('#btnFilter').click(function(e) {
             e.preventDefault();
             loaddata();
+            revTbl.ajax.reload();
         });
 
-        $('#revTbl').DataTable({
+        var revTbl = $('#revTbl').DataTable({
             lengthChange: false,
             searching: false,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('dynamicdashboard.revenueDetails') }}",
+                type: "POST",
+                data: function(d) {
+                    d._token = "{{ csrf_token() }}";
+                    d.office = $('#office').val();
+                    d.year = $('#year').val();
+                }
+            },
+            columns: [
+                { data: 'orderNumber', name: 'orderNumber' },
+                { data: 'customerName' },
+                { data: 'orderDate', name: 'orderDate' },
+                { data: 'revenue' }
+            ],
         });
     </script>
 @endsection

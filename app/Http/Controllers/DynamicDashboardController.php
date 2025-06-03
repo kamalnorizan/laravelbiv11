@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Office;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class DynamicDashboardController extends Controller
 {
@@ -79,5 +81,39 @@ class DynamicDashboardController extends Controller
         });
 
         return response()->json($data);
+    }
+
+    public function revenueDetails(Request $request) {
+        $orders = Order::with('orderdetails');
+
+        if ($request->has('office') && $request->office != '') {
+            $orders = $orders->whereHas('customer', function ($query) use ($request) {
+                $query->whereHas('salesRep', function ($query) use ($request) {
+                    $query->where('officeCode', $request->office);
+                });
+            });
+        }
+
+        if ($request->has('year') && $request->year != '') {
+            $orders = $orders->whereYear('orderDate', $request->year);
+        } else {
+            $orders = $orders->whereYear('orderDate', date('Y'));
+        }
+
+        return DataTables::of($orders)
+            ->addColumn('orderDate', function ($row) {
+                return Carbon::parse($row->orderDate)->format('d-m-Y');
+                // return '1';
+            })
+            ->addColumn('customerName', function (Order $row) {
+
+                return $row->customer->customerName ?? 'N/A';
+            })
+            ->addColumn('revenue', function ($row) {
+                return number_format($row->orderdetails->sum(function ($detail) {
+                    return $detail->priceEach * $detail->quantityOrdered;
+                }),2);
+            })
+            ->make(true);
     }
 }
