@@ -100,6 +100,12 @@ class DynamicDashboardController extends Controller
             $orders = $orders->whereYear('orderDate', date('Y'));
         }
 
+        if ($request->has('monthyear') && $request->monthyear != '') {
+            $monthYear = Carbon::createFromFormat('Ym', $request->monthyear);
+            $orders = $orders->whereYear('orderDate', $monthYear->year)
+                             ->whereMonth('orderDate', $monthYear->month);
+        }
+
         return DataTables::of($orders)
             ->addColumn('orderDate', function ($row) {
                 return Carbon::parse($row->orderDate)->format('d-m-Y');
@@ -113,6 +119,26 @@ class DynamicDashboardController extends Controller
                 return number_format($row->orderdetails->sum(function ($detail) {
                     return $detail->priceEach * $detail->quantityOrdered;
                 }),2);
+            })
+            ->make(true);
+    }
+
+    public function customerDetails(Request $request) {
+        $customers = Customer::query();
+
+        if ($request->has('office') && $request->office != '') {
+            $customers = $customers->whereHas('salesRep', function ($query) use ($request) {
+                $query->where('officeCode', $request->office);
+            });
+        }
+
+        return DataTables::of($customers)
+            ->addColumn('salesRep', function (Customer $row) {
+                if (!$row->salesRep) {
+                    return 'N/A';
+                }
+                return $row->salesRep->firstName . ' ' . $row->salesRep->lastName;
+                // return $row->salesRep->firstName . ' ' . $row->salesRep->lastName;
             })
             ->make(true);
     }

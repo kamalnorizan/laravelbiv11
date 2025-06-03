@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('head')
-<link rel="stylesheet" href="{{ asset('css/dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/dataTables.min.css') }}">
     <style>
         .card-icon {
             position: absolute;
@@ -15,14 +15,14 @@
 
 @section('main')
     <h1>Dynamic Dashboard
-        <button class="btn btn-primary btn-sm float-end" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFilter"
-            aria-controls="offcanvasFilter">
+        <button class="btn btn-primary btn-sm float-end" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasFilter" aria-controls="offcanvasFilter">
             Filter
         </button>
     </h1>
     <div class="row g-2">
         <div class="col-md-3">
-            <div class="card text-bg-primary">
+            <div class="card text-bg-primary" id="totalCustomer">
                 <div class="card-body">
                     <h5 class="card-title">Total Customer</h5>
                     <p class="card-text display-6">
@@ -75,23 +75,40 @@
             <canvas id="revChart" height="250"></canvas>
         </div>
         <div class="col-md-6">
-            <table class="table" id="revTbl">
-                <thead>
-                    <tr>
-                        <th>Order #</th>
-                        <th>Customer</th>
-                        <th>Date</th>
-                        <th>Revenue</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div id="revTableDiv" class="">
+                <table class="table" id="revTbl">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="custTableDiv" class="tblDiv d-none">
+                <button type="button" class="btn btn-link btn-close float-end"></button>
+                <table class="table" id="custTbl">
+                    <thead>
+                        <tr>
+                            <th>customerName #</th>
+                            <th>phone</th>
+                            <th>salesRep</th>
+                            <th>city</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
 
 
-    <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="offcanvasFilter" aria-labelledby="staticBackdropLabel">
+    <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="offcanvasFilter"
+        aria-labelledby="staticBackdropLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="staticBackdropLabel">
                 Dashboard Filter
@@ -126,8 +143,20 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/dataTables.min.js') }}"></script>
     <script>
+        $('#totalCustomer').click(function (e) {
+            e.preventDefault();
+            $('#custTableDiv').removeClass('d-none');
+            $('#revTableDiv').addClass('d-none');
+            custTbl.ajax.reload();
+        });
+
+        $('.btn-close').click(function (e) {
+            e.preventDefault();
+            $(this).closest('.tblDiv').addClass('d-none');
+            $('#revTableDiv').removeClass('d-none');
+        });
         loaddata();
 
         function loaddata() {
@@ -151,15 +180,18 @@
                     $('#offcanvasFilter').offcanvas('hide');
                     const labels = response.monthOrder.map(item => `${item.month} ${item.year}`);
                     const data = response.monthOrder.map(item => parseFloat(item.total) || 0);
-                    renderMonthlyRevenueChart(labels, data);
+
+                    renderMonthlyRevenueChart(labels, data, response.monthOrder);
                 }
             });
         }
         var monthlyRevChart;
-        function renderMonthlyRevenueChart(labels, data){
+        var monthyear;
+
+        function renderMonthlyRevenueChart(labels, data, monthRev) {
             const monthlyRevCtx = document.getElementById('revChart').getContext('2d');
 
-            if(monthlyRevChart) {
+            if (monthlyRevChart) {
                 monthlyRevChart.destroy();
             }
 
@@ -181,6 +213,17 @@
                     scales: {
                         y: {
                             beginAtZero: true
+                        }
+                    },
+                    onClick: function(e, activeElements) {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            const selected = monthRev[index];
+                            console.log(selected);
+                            monthyear = selected.monthyear;
+                            const value = parseFloat(selected.total) || 0;
+                            renderMonthlyRevenueChart([labels[index]], [value], [monthyear]);
+                            revTbl.ajax.reload();
                         }
                     }
                 }
@@ -205,13 +248,53 @@
                     d._token = "{{ csrf_token() }}";
                     d.office = $('#office').val();
                     d.year = $('#year').val();
+                    d.monthyear = monthyear;
                 }
             },
-            columns: [
-                { data: 'orderNumber', name: 'orderNumber' },
-                { data: 'customerName' },
-                { data: 'orderDate', name: 'orderDate' },
-                { data: 'revenue' }
+            columns: [{
+                    data: 'orderNumber',
+                    name: 'orderNumber'
+                },
+                {
+                    data: 'customerName'
+                },
+                {
+                    data: 'orderDate',
+                    name: 'orderDate'
+                },
+                {
+                    data: 'revenue'
+                }
+            ],
+        });
+
+        var custTbl = $('#custTbl').DataTable({
+            lengthChange: false,
+            searching: false,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('dynamicdashboard.customerDetails') }}",
+                type: "POST",
+                data: function(d) {
+                    d._token = "{{ csrf_token() }}";
+                    d.office = $('#office').val();
+                    d.year = $('#year').val();
+                }
+            },
+            columns: [{
+                    data: 'customerName',
+                    name: 'customerName'
+                },
+                {
+                    data: 'phone'
+                },
+                {
+                    data: 'salesRep'
+                },
+                {
+                    data: 'city'
+                }
             ],
         });
     </script>
