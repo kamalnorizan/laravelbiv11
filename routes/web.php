@@ -13,5 +13,6 @@ Route::get('/chartjs', function () {
 
 Route::get('/dynamicdashboard', [DynamicDashboardController::class, 'index'])->name('dynamicdashboard.index');
 Route::post('/dynamicdashboard/loaddata', [DynamicDashboardController::class, 'loaddata'])->name('dynamicdashboard.loaddata');
+Route::post('/dynamicdashboard/revenueDetails', [DynamicDashboardController::class, 'revenueDetails'])->name('dynamicdashboard.revenueDetails');
 
 

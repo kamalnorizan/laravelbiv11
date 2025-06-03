@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('head')
+<link rel="stylesheet" href="{{ asset('css/dataTables.min.css') }}">
     <style>
         .card-icon {
             position: absolute;
@@ -73,6 +74,19 @@
         <div class="col-md-6">
             <canvas id="revChart" height="250"></canvas>
         </div>
+        <div class="col-md-6">
+            <table class="table" id="revTbl">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
 
@@ -112,6 +126,7 @@
 @endsection
 
 @section('scripts')
+<script src="{{ asset('js/dataTables.min.js') }}"></script>
     <script>
         loaddata();
 
@@ -175,6 +190,11 @@
         $('#btnFilter').click(function(e) {
             e.preventDefault();
             loaddata();
+        });
+
+        $('#revTbl').DataTable({
+            lengthChange: false,
+            searching: false,
         });
     </script>
 @endsection
