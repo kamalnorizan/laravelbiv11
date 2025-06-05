@@ -21,6 +21,6 @@ Route::get('metabase', function () {
     return view('metabase');
 })->name('metabase');
 
-Route::get('/metabase/embed', [MetabaseController::class, 'getEmbedUrl'])->name('metabase.embed');
+Route::get('/metabase/embed/{type}/{id}', [MetabaseController::class, 'getEmbedUrl'])->name('metabase.embed');
 
 
