@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MetabaseController;
 use App\Http\Controllers\DynamicDashboardController;
 
 Route::get('/', function () {
@@ -15,5 +16,11 @@ Route::get('/dynamicdashboard', [DynamicDashboardController::class, 'index'])->n
 Route::post('/dynamicdashboard/loaddata', [DynamicDashboardController::class, 'loaddata'])->name('dynamicdashboard.loaddata');
 Route::post('/dynamicdashboard/revenueDetails', [DynamicDashboardController::class, 'revenueDetails'])->name('dynamicdashboard.revenueDetails');
 Route::post('/dynamicdashboard/customerDetails', [DynamicDashboardController::class, 'customerDetails'])->name('dynamicdashboard.customerDetails');
+
+Route::get('metabase', function () {
+    return view('metabase');
+})->name('metabase');
+
+Route::get('/metabase/embed', [MetabaseController::class, 'getEmbedUrl'])->name('metabase.embed');
 
 
